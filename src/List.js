@@ -3,6 +3,20 @@ import { Table } from 'reactstrap';
 
 
 class List extends Component {
+  renderTable = () => {
+    const {users} = this.props;
+    return users.map(user => {
+      return (
+        <tr key={user.email}>
+          <td>{user.firstName}</td>
+          <td>{user.lastName}</td>
+          <td>{user.coutry}</td>
+          <td>{user.email}</td>
+        </tr>
+      );
+    });
+  }
+
   render () {
     return (
       <Table>
@@ -15,24 +29,7 @@ class List extends Component {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>France</td>
-            <td>example@mail.com</td>
-          </tr>
-          <tr>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>Spain</td>
-            <td>example@mail.com</td>
-          </tr>
-          <tr>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>Thailand</td>
-            <td>example@mail.com</td>
-          </tr>
+          {this.renderTable()}
         </tbody>
       </Table>
     );
