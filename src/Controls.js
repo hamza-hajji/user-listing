@@ -8,7 +8,7 @@ class Contols extends Component {
   render() {
     return (
       <InputGroup size="lg">
-        <Input placeholder="Filter" />
+        <Input placeholder="Filter" disabled={this.props.disableControls} />
       </InputGroup>
     );
   }
