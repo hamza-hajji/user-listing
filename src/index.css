@@ -1,0 +1,23 @@
+@import url(../node_modules/bootstrap/dist/css/bootstrap.min.css);
+
+body {
+  padding-top: 1rem;
+}
+
+.main-app {
+  box-shadow: 0 0 2px 2px #535353;
+  padding: 1rem;
+}
+
+.user-list {
+  margin-top: 2rem;
+}
+
+input {
+  border-radius: 0 !important;
+}
+
+input:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
