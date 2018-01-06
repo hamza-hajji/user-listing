@@ -19,5 +19,44 @@ input {
 
 input:focus {
   box-shadow: none !important;
-  outline: none !important;
+}
+
+.shrunk {
+  display: none;
+}
+
+.filter-input {
+  position: relative;
+}
+
+.filter-list {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: inherit !important;
+}
+
+.filter-group {
+  display: inline-block;
+  padding: .5rem;
+  margin-top: .3rem;
+  margin-bottom: .3rem;
+  margin-right: .3rem;
+  background: #eee;
+}
+
+.filter-value {
+  background: #aaa;
+  color: #fff;
+  border-radius: .3rem;
+  padding: .3rem;  
+}
+
+.filters {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  padding-left: .3rem;
 }
