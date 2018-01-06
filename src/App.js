@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import Controls from './Controls';
 import List from './List';
-import {Api} from './api';
 import Loading from './Loading';
+
+import { getUsers } from './actions';
 
 // helper function
 const areFiltersEmpty = (filters) => {
@@ -13,33 +16,23 @@ const areFiltersEmpty = (filters) => {
 }
 
 class App extends Component {
-  state = {
-    users: null,
-    filters: {
-      firstName: '',
-      lastName: '',
-      country: '',
-      email: ''
-    }
-  }
-
   applyFilters(users, filters) {
     if (areFiltersEmpty(filters)) return users;
 
     return users
-            .filter(user => filters.firstName.length ? (user.firstName === filters.firstName) : true)
-            .filter(user => filters.lastName.length ? (user.lastName === filters.lastName) : true)
-            .filter(user => filters.country.length ? (user.coutry === filters.country) : true)
-            .filter(user => filters.email.length ? (user.email === filters.email) : true);
+            .filter(user => filters.firstName.length ? (user.firstName.toLowerCase() === filters.firstName.toLowerCase()) : true)
+            .filter(user => filters.lastName.length ? (user.lastName.toLowerCase() === filters.lastName.toLowerCase()) : true)
+            .filter(user => filters.country.length ? (user.coutry.toLowerCase() === filters.country.toLowerCase()) : true)
+            .filter(user => filters.email.length ? (user.email.toLowerCase() === filters.email.toLowerCase()) : true);
   }
 
   componentDidMount() {
-    Api.getUsers().then((users) => {
-      this.setState({users});
-    });
+    this.props.getUsers();
   }
 
   render() {
+    const users = this.applyFilters(this.props.users, this.props.filters);
+
     return (
       <div className="container">
         <div className="row">
@@ -47,16 +40,15 @@ class App extends Component {
             <div className="main-app">
               {/* Only enable the input when state.users is not null */}              
               <Controls
-                filters={this.state.filter}
-                applyFilters={this.applyFilters.bind(this, this.state.users)}
-                disableControls={!Boolean(this.state.users)} />
+                filters={this.props.filters}
+                disableControls={!Boolean(this.props.users)} />
               <div className="user-list">
                 {/* Only show the table when state.users is not null */}
                 {
-                  Boolean(this.state.users)
+                  Boolean(this.props.users)
                   ? (
-                    this.applyFilters(this.state.users, this.state.filters).length
-                    ? <List users={this.applyFilters(this.state.users, this.state.filters)} />
+                    users.length
+                    ? <List users={users} />
                     : <div className="text-center text-info lead">No results for these filters!</div>
                   )
                   : <Loading />
@@ -70,4 +62,6 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = ({users, filters}) => ({users, filters});
+
+export default connect(mapStateToProps, {getUsers})(App);

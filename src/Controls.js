@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { findDOMNode } from 'react-dom';
 import {
   InputGroup,
@@ -7,6 +8,8 @@ import {
 
 import FiltersDropDown from './DropDown';
 import Filter from './Filter';
+
+import { setFilters, clearFilter } from './actions';
 
 class Controls extends Component {
   state = {
@@ -86,7 +89,13 @@ class Controls extends Component {
               }),
               showFilters: true
             }, () => {
-              this.setState({suggestions: this.state.availableFilters})
+              this.setState({suggestions: this.state.availableFilters});
+              this.state.selectedFilters.map(sf => {
+                console.log("HERE");
+                this.props.setFilters({
+                  [sf.filter[0].toLowerCase() + sf.filter.slice(1)]: sf.value
+                });
+              });
             });
           });
           findDOMNode(this.input).value = '';
@@ -145,14 +154,13 @@ class Controls extends Component {
   clearFilter = (sf) => {
     const {selectedFilters, availableFilters, leftPadding} = this.state;
     const index = selectedFilters.indexOf(sf);
+    this.props.clearFilter(sf.filter[0].toLowerCase() + sf.filter.slice(1));
 
     this.setState({
       selectedFilters: [
         ...selectedFilters.slice(0, index),
         ...selectedFilters.slice(index + 1),
-      ],
-      suggestions: this.state.availableFilters,
-      currentInput: ''
+      ]
     }, () => {
       let width = 0;
       const spans = document.querySelectorAll('.filter-group');
@@ -166,7 +174,11 @@ class Controls extends Component {
         ],
         leftPadding: width + 10
       }, () => {
-        findDOMNode(this.input).focus();      
+        this.setState({
+          suggestions: this.state.availableFilters,
+          currentInput: ''
+        });
+        findDOMNode(this.input).focus();
       });
     });
   }
@@ -215,4 +227,4 @@ class Controls extends Component {
   }
 }
 
-export default Controls;
+export default connect(null, {setFilters, clearFilter})(Controls);
