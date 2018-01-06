@@ -49,6 +49,13 @@ class Controls extends Component {
   onKeyDown = (e) => {
     const {value} = e.target;
 
+    if (e.ctrlKey && e.keyCode === 8) {
+      return this.setState({
+        currentInput: '',
+        suggestions: this.state.availableFilters
+      });
+    }
+
     switch (e.keyCode) {
       case 32:
         e.preventDefault();
@@ -60,7 +67,8 @@ class Controls extends Component {
                 filter: e.target.value.split(' ')[0],
                 value: e.target.value.split(' ')[1],
               }
-            ]
+            ],
+            currentInput: ''
           }, () => { // only change the left padding and update available filters when the selected filters are updated
             let width = 0;
             const spans = document.querySelectorAll('.filter-group');
@@ -92,14 +100,22 @@ class Controls extends Component {
       case 39:
         e.preventDefault();
         break;
-      default:
-        if (e.target.value.split(' ').length === 1 && e.keyCode !== 32) {
+      default:      
+        if (
+          value.split(' ').length === 1
+          && e.keyCode !== 32
+          && e.keyCode !== 37
+          && e.keyCode !== 38
+          && e.keyCode !== 39
+          && e.keyCode !== 40
+          && e.keyCode !== 9) {
           let currentInput;
           if (e.keyCode !== 8) {
             currentInput = String.fromCharCode(e.keyCode).toLowerCase();
             this.setState({
               currentInput: this.state.currentInput + currentInput
             }, () => {
+              console.log(this.state.currentInput);
               this.setState({
                 suggestions: this.state.availableFilters.filter(s => {
                   return s.slice(0, this.state.currentInput.length).toLowerCase() === this.state.currentInput;
@@ -107,9 +123,8 @@ class Controls extends Component {
               });
             });
           } else {
-            currentInput = String.fromCharCode(e.keyCode).toLowerCase();
             this.setState({
-              currentInput: this.state.currentInput.slice(this.state.currentInput.length)
+              currentInput: this.state.currentInput.slice(0, this.state.currentInput.length - 1)
             }, () => {
               this.setState({
                 suggestions: this.state.availableFilters.filter(s => {
@@ -135,7 +150,9 @@ class Controls extends Component {
       selectedFilters: [
         ...selectedFilters.slice(0, index),
         ...selectedFilters.slice(index + 1),
-      ]
+      ],
+      suggestions: this.state.availableFilters,
+      currentInput: ''
     }, () => {
       let width = 0;
       const spans = document.querySelectorAll('.filter-group');
@@ -148,6 +165,8 @@ class Controls extends Component {
           ...availableFilters,
         ],
         leftPadding: width + 10
+      }, () => {
+        findDOMNode(this.input).focus();      
       });
     });
   }
